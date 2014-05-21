@@ -1,5 +1,7 @@
 import sys
 
+from ..election import Ballot
+
 class MongoIterator:
     def __init__(self, cursor, election):
         self.cursor = cursor

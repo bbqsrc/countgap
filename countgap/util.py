@@ -1,6 +1,14 @@
 from io import StringIO
 from string import ascii_uppercase
 
+
+def zero_counter(iterable):
+    c = Counter()
+    for x in iterable:
+        c[x] = 0
+    return c
+
+
 def create_matrix(keys, values):
     if len(keys) > 26:
         raise ValueError("Not enough alphabet. Write better util code!")

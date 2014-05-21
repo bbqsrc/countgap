@@ -5,7 +5,7 @@ from collections import defaultdict, Counter, namedtuple
 from io import StringIO
 from string import ascii_uppercase
 
-from .util import create_matrix, zero_counter
+from ..util import create_matrix, zero_counter
 
 class BallotExhaustionError(ValueError): pass
 

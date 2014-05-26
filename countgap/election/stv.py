@@ -1,4 +1,5 @@
-from ..election.irv import IRVElection
+from ..election.irv import IRVElection, BallotExhaustionError
+from ..util import zero_counter
 
 class STVElection(IRVElection):
     def _eliminate_weakest_candidate(self, counter):
@@ -11,12 +12,12 @@ class STVElection(IRVElection):
             blist = ballot.list
             index = ballot.data['current']
 
-            while blist[index][0] in self._eliminated:
+            while blist[index] in self._eliminated:
                 index += 1
                 if index >= len(blist):
                     raise BallotExhaustionError
 
-            c[blist[index][0]] += 1
+            c[blist[index]] += ballot.data.get('value', 1)
 
         return c
 

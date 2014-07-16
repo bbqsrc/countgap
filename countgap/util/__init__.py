@@ -53,11 +53,3 @@ def create_matrix(keys, values):
         out.write(row_sep)
 
     return out
-
-def test():
-    return create_matrix(['a', 'b', 'c'], {
-        'a': {'b': 2, 'c': 3},
-        'b': {'a': 1, 'c': 3},
-        'c': {'a': 1, 'b': 2}
-    })
-

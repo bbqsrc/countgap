@@ -1,4 +1,5 @@
 import sys
+import pymongo
 
 from ..election import Ballot
 
@@ -41,5 +42,25 @@ class MongoIterator:
     def __len__(self):
         return self.cursor.count()
 
+def get_elections(slug, db="stopgap"):
+    db = pymongo.Connection()[db]
+    election = db.elections.find_one({"slug": slug})
 
+    ballot = db.ballots.find_one({"election_id": election['_id']})
+    return list(ballot['ballot']['elections'].keys())
+
+def get_election_iterator(slug, election_name, db="stopgap"):
+    db = pymongo.Connection()[db]
+    election = db.elections.find_one({"slug": slug})
+
+    return MongoIterator(db.ballots.find({
+        "election_id": election["_id"]}), election_name)
+
+
+def get_election_candidates(slug, election_name, db="stopgap"):
+    db = pymongo.Connection()[db]
+    election = db.elections.find_one({"slug": slug})
+
+    ballot = db.ballots.find_one({"election_id": election['_id']})
+    return list(ballot['ballot']['elections'][election_name].keys())
 

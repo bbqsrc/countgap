@@ -15,8 +15,8 @@ class MongoIterator:
         try:
             n = next(self.cursor)
 
-            x = n['ballot']['elections'][self.election]
-            for k, v in x.items():
+            x = n['data']['elections'][self.election]
+            for k, v in x.copy().items():
 
                 # Check for blank field
                 if v == '':
@@ -43,24 +43,18 @@ class MongoIterator:
         return self.cursor.count()
 
 def get_elections(slug, db="stopgap"):
-    db = pymongo.Connection()[db]
-    election = db.elections.find_one({"slug": slug})
-
-    ballot = db.ballots.find_one({"election_id": election['_id']})
-    return list(ballot['ballot']['elections'].keys())
+    db = pymongo.MongoClient()[db]
+    ballot = db.ballots.find_one({"poll": slug, 'data': { "$exists": True }})
+    return list(ballot['data']['elections'].keys())
 
 def get_election_iterator(slug, election_name, db="stopgap"):
-    db = pymongo.Connection()[db]
-    election = db.elections.find_one({"slug": slug})
-
+    db = pymongo.MongoClient()[db]
     return MongoIterator(db.ballots.find({
-        "election_id": election["_id"]}), election_name)
-
+        "poll": slug, 'data': { "$exists": True }
+    }), election_name)
 
 def get_election_candidates(slug, election_name, db="stopgap"):
-    db = pymongo.Connection()[db]
-    election = db.elections.find_one({"slug": slug})
-
-    ballot = db.ballots.find_one({"election_id": election['_id']})
-    return list(ballot['ballot']['elections'][election_name].keys())
+    db = pymongo.MongoClient()[db]
+    ballot = db.ballots.find_one({"poll": slug, 'data': { "$exists": True }})
+    return list(ballot['data']['elections'][election_name].keys())
 

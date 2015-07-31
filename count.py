@@ -5,7 +5,6 @@ import countgap
 if __name__ == "__main__":
     p = argparse.ArgumentParser()
 
-    p.add_argument('--type', '-t')
     p.add_argument('--db', default="stopgap")
     p.add_argument('slug')
     p.add_argument('election', nargs='?')

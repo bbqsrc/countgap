@@ -14,7 +14,17 @@ class SchulzeResults(Results):
 
     @property
     def plaintext(self):
-        return "%s\n\n%s" % (self.rankings_plaintext, self.matrix_plaintext)
+        return "%s\n\n%s\n\n%s" % (self.score_plaintext, self.rankings_plaintext, self.matrix_plaintext)
+
+    @property
+    def score_plaintext(self):
+        out = "# Score:\n\n"
+
+        for k, v in self._score.items():
+            for k1, v1 in v.most_common():
+                if k == k1: continue
+                out += "%s prefer %s over %s.\n" % (v1, k, k1)
+        return out.strip()
 
     @property
     def rankings_plaintext(self):
@@ -32,7 +42,7 @@ class SchulzeResults(Results):
         cands = [x[0] for x in self._rankings.most_common()]
 
         out.write("# Path Matrix:\n\n")
-        
+
         out.write("\n".join(["(%s) %s" % (ascii_uppercase[n], x) for n, x in enumerate(cands)]))
         out.write("\n\n")
 
@@ -55,11 +65,15 @@ class SchulzeElection(Election):
     def print_results(self):
         if self._results is None:
             raise ValueError
-        
+
         print(self._results.plaintext)
 
     def _calculate_strongest_paths(self, score):
-        paths = defaultdict(lambda: zero_counter(self.candidates))
+        paths = {}
+        for i in self.candidates:
+            paths[i] = {}
+            for j in self.candidates:
+                paths[i][j] = 0
 
         for i in self.candidates:
             for j in self.candidates:
@@ -112,7 +126,6 @@ class SchulzeElection(Election):
                 if i == j: continue
                 if paths[i][j] > paths[j][i]:
                     ranking[i] += 1
-
         return ranking
 
 
